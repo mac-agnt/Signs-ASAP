@@ -4,13 +4,10 @@ import AgentFace from "../components/AgentFace";
 import NavThumb from "../components/NavThumb";
 import DashboardKpiBand from "./pages/DashboardKpiBand";
 import Home from "./pages/Home";
-import Work from "./pages/Work";
 import Records from "./pages/Records";
 import RecordsFiles from "./pages/RecordsFiles";
 import RecordsOntology from "./pages/RecordsOntology";
 import Activity from "./pages/Activity";
-import Settings from "./pages/Settings";
-import Dashboard from "./pages/Dashboard";
 import Agents from "./pages/Agents";
 import HeliosMini from "./overlays/HeliosMini";
 import WorkViewer from "./overlays/WorkViewer";
@@ -18,6 +15,13 @@ import AgentStudio from "./overlays/AgentStudio";
 import NewRecordDialog from "./overlays/NewRecordDialog";
 import CommandPalette from "./overlays/CommandPalette";
 import BackgroundGallery from "./overlays/BackgroundGallery";
+import { ModuleHost, GlobalOverlays } from "../signs/Shell";
+import SignsDashboard from "../signs/pages/SignsDashboard";
+import SignsWork from "../signs/pages/SignsWork";
+import SignsRecords from "../signs/pages/SignsRecords";
+import SignsActivity from "../signs/pages/SignsActivity";
+import SignsSettings from "../signs/pages/SignsSettings";
+import AgentOverview from "../signs/pages/AgentOverview";
 
 type Props = { v: any };
 
@@ -31,17 +35,18 @@ export default function AppShell({ v }: Props) {
       <nav data-rail-nav="1" style={css(v.railOuter)}>
         <span style={css(v.railThumbStyle)} />
         <div style={css(cat(v.railRowStyle, "margin-bottom:22px"))}>
-          <button className={cx("ix0", "ix1")} onClick={v.toggleRail} title={v.railLabel} style={{"width":"36px","height":"36px","flex":"none","border":"0","borderRadius":"var(--cta-r,11px)","background":"var(--accent-fill,var(--accent))","color":"var(--on-accent)","boxShadow":"var(--accent-glow,none)","cursor":"pointer","display":"flex","alignItems":"center","justifyContent":"center","fontSize":"13px","fontWeight":"600","padding":"0","transition":"transform .2s var(--ease)"}}>
-            {"K"}
-          </button>
-          <span style={css(v.brandStyle)}>
-            <span style={{"display":"block","fontSize":"15px","fontWeight":"600","letterSpacing":"-.3px","color":"var(--ink)"}}>
-              {"Kilbride Group"}
-            </span>
-            <span style={{"display":"block","marginTop":"2px","fontSize":"9px","fontWeight":"500","letterSpacing":".16em","color":"var(--accent)"}}>
-              {"PULSE · OPERATIONS"}
-            </span>
-          </span>
+          {v.railOpen ? (
+            <button onClick={v.goHome} title="Signs ASAP" style={{"flex":"1","minWidth":"0","border":"0","background":"none","padding":"0","cursor":"pointer","display":"flex","flexDirection":"column","alignItems":"flex-start","gap":"6px"}}>
+              <img src="/brand/signs-asap-logo-white.png" alt="Signs ASAP, the branding specialists" style={{"width":"150px","height":"auto","display":"block"}} />
+              <span style={{"display":"block","fontSize":"9px","fontWeight":"600","letterSpacing":".16em","color":"var(--faint)"}}>
+                {"PULSE · OPERATIONS"}
+              </span>
+            </button>
+          ) : (
+            <button className={cx("ix0", "ix1")} onClick={v.toggleRail} title={v.railLabel} style={{"width":"36px","height":"36px","flex":"none","border":"0","borderRadius":"var(--cta-r,11px)","background":"var(--accent-fill,var(--accent))","color":"var(--on-accent)","boxShadow":"var(--accent-glow,none)","cursor":"pointer","display":"flex","alignItems":"center","justifyContent":"center","fontSize":"11px","fontWeight":"700","letterSpacing":"-.3px","padding":"0"}}>
+              {"SA"}
+            </button>
+          )}
           {v.railOpen && (
             <>
               <button className="ix2" onClick={v.toggleRail} title={v.railLabel} style={{"width":"28px","height":"28px","flex":"none","border":"0","borderRadius":"var(--r-ctl,10px)","background":"none","color":"var(--mid)","cursor":"pointer","display":"flex","alignItems":"center","justifyContent":"center","transition":"background .2s var(--ease),color .2s var(--ease)"}}>
@@ -54,11 +59,11 @@ export default function AppShell({ v }: Props) {
         </div>
         {arr(v.nav).map((item: any, i0: number) => (
           <Fragment key={i0}>
-            {item?.isDivider && (
-              <>
-                <div style={{"width":"20px","height":"1px","background":"var(--track)","margin":"7px 0"}} />
-              </>
-            )}
+            {item?.isDivider && (v.railOpen && item?.group ? (
+              <div style={{"padding":item?.lead ? "0 14px 6px" : "14px 14px 6px","fontSize":"10px","fontWeight":"600","letterSpacing":".14em","color":"var(--faint)"}}>{item?.group}</div>
+            ) : item?.lead ? null : (
+              <div style={{"width":"20px","height":"1px","background":"var(--track)","margin":"7px 0"}} />
+            ))}
             {item?.isItem && (
               <>
                 <button className="ix3" data-rail={item?.railKey} onClick={item?.go} onPointerEnter={item?.enter} onPointerLeave={item?.leave} style={css(item?.style)}>
@@ -96,14 +101,14 @@ export default function AppShell({ v }: Props) {
               </div>
               <div style={{"display":"flex","alignItems":"center","gap":"11px","marginTop":"12px"}}>
                 <div style={{"width":"40px","height":"40px","flex":"none","borderRadius":"999px","background":"var(--accent-soft)","color":"var(--accent)","display":"flex","alignItems":"center","justifyContent":"center","fontSize":"13px","fontWeight":"600"}}>
-                  {"MK"}
+                  {"MD"}
                 </div>
                 <div style={{"minWidth":"0"}}>
                   <div style={{"fontSize":"17px","fontWeight":"600","letterSpacing":"-.3px","color":"var(--ink)","whiteSpace":"nowrap","overflow":"hidden","textOverflow":"ellipsis"}}>
-                    {"Martin Kilbride"}
+                    {"Managing Director"}
                   </div>
                   <div style={{"fontSize":"12.5px","color":"var(--faint)","marginTop":"2px","whiteSpace":"nowrap","overflow":"hidden","textOverflow":"ellipsis"}}>
-                    {"Kilbride Group · Owner"}
+                    {"Signs ASAP · Owner"}
                   </div>
                 </div>
               </div>
@@ -143,14 +148,14 @@ export default function AppShell({ v }: Props) {
             </button>
             <div style={css(cat(v.railRowStyle, "margin-top:10px;padding:12px 10px;border-top:1px solid var(--border)"))}>
               <div style={{"width":"40px","height":"40px","flex":"none","borderRadius":"12px","background":"var(--surface-2)","border":"1px solid var(--border)","color":"var(--body)","display":"flex","alignItems":"center","justifyContent":"center","fontSize":"12px","fontWeight":"600","cursor":"pointer"}}>
-                {"MK"}
+                {"MD"}
               </div>
               <span style={css(v.brandStyle)}>
                 <span style={{"display":"block","fontSize":"14px","fontWeight":"500","color":"var(--ink)"}}>
-                  {"Martin Kilbride"}
+                  {"Managing Director"}
                 </span>
                 <span style={{"display":"block","marginTop":"2px","fontSize":"12px","color":"var(--faint)"}}>
-                  {"Kilbride Group · Owner"}
+                  {"Signs ASAP · Owner"}
                 </span>
               </span>
             </div>
@@ -165,7 +170,8 @@ export default function AppShell({ v }: Props) {
           {txt(v.hoverLabel?.hint)}
         </span>
       </span>
-      <main style={css(cat("--page-dy:", v.pageDy, ";position:relative;z-index:1;flex:1;min-width:0;display:flex;flex-direction:column;margin:16px 16px 16px 0;background:var(--panel,#0f1316);border:1px solid var(--border);border-radius:28px;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.03) inset"))}>
+      {v.phoneNav && <div onClick={v.closePhoneNav} style={{"position":"fixed","inset":"0","zIndex":"94","background":"var(--scrim)","backdropFilter":"blur(4px)"}} />}
+      <main style={css(cat("--page-dy:", v.pageDy, ";position:relative;z-index:1;flex:1;min-width:0;display:flex;flex-direction:column;margin:", v.mainMargin, ";background:var(--panel,#0f1316);border:1px solid var(--border);border-radius:28px;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.03) inset"))}>
         {"\n"}
         {txt(v.pageSweepEl)}
         {"\n"}
@@ -176,7 +182,12 @@ export default function AppShell({ v }: Props) {
         )}
         <div style={{"position":"absolute","left":"0","right":"0","bottom":"0","height":"64px","zIndex":"3","pointerEvents":"none","maskImage":"linear-gradient(0deg,#000 0%,transparent 100%)","WebkitMaskImage":"linear-gradient(0deg,#000 0%,transparent 100%)","background":"linear-gradient(0deg,var(--bg) 0%,rgba(0,0,0,0) 100%)","opacity":".85"}} />
         <div style={css(v.headerFieldStyle)} />
-        <header style={{"position":"relative","zIndex":"4","flex":"none","width":"100%","padding":"18px 28px","boxSizing":"border-box","borderBottom":"1px solid var(--border)"}}>
+        <header className="sa-header" style={{"position":"relative","zIndex":"4","flex":"none","width":"100%","padding":"18px 28px","boxSizing":"border-box","borderBottom":"1px solid var(--border)"}}>
+          {v.phone && (
+            <button onClick={v.openPhoneNav} aria-label="Open menu" style={{"position":"absolute","left":"10px","top":"50%","transform":"translateY(-50%)","zIndex":"5","width":"40px","height":"40px","border":"1px solid var(--border)","borderRadius":"999px","background":"var(--surface)","color":"var(--ink)","display":"flex","alignItems":"center","justifyContent":"center","cursor":"pointer"}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><path d="M4 6h16 M4 12h16 M4 18h16" /></svg>
+            </button>
+          )}
           <div style={css(v.headerPillStyle)}>
             {v.isAgents && (
               <>
@@ -242,7 +253,7 @@ export default function AppShell({ v }: Props) {
                 </div>
               </>
             )}
-            <div style={css(cat("flex:", v.searchWrapFlex, ";min-width:42px;display:flex;align-items:center;justify-content:center;padding:0 6px"))}>
+            {!v.phone && <div style={css(cat("flex:", v.searchWrapFlex, ";min-width:42px;display:flex;align-items:center;justify-content:center;padding:0 6px"))}>
               <button className="ix7" onClick={v.openPalette} title={v.searchHint} style={css(v.searchBarStyle)}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{"flex":"none"}}>
                   <path d="m21 21-4.3-4.3 M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0" />
@@ -258,7 +269,7 @@ export default function AppShell({ v }: Props) {
                   </>
                 )}
               </button>
-            </div>
+            </div>}
             {v.showHint && (
               <>
                 <span style={{"flex":"0 1 auto","minWidth":"0","padding":"0 12px","fontFamily":"var(--mono)","fontSize":"9.5px","letterSpacing":"0.11em","color":"var(--faint)","whiteSpace":"nowrap","overflow":"hidden","textOverflow":"ellipsis"}}>
@@ -266,7 +277,7 @@ export default function AppShell({ v }: Props) {
                 </span>
               </>
             )}
-            {v.barOpen && (
+            {v.barOpen && !v.phone && (
               <>
                 <div style={{"width":"1px","height":"18px","flex":"none","margin":"0 4px","background":"var(--border)"}} />
                 <div style={{"flex":"0 0 auto","display":"flex","alignItems":"center","gap":"2px","padding":"0 3px"}}>
@@ -311,10 +322,10 @@ export default function AppShell({ v }: Props) {
                         <>
                           <div style={{"minWidth":"0"}}>
                             <div style={{"fontSize":"12px","fontWeight":"500","lineHeight":"1.2","whiteSpace":"nowrap"}}>
-                              {"Martin Kilbride"}
+                              {"Managing Director"}
                             </div>
                             <div style={{"fontSize":"10.5px","color":"var(--faint)","lineHeight":"1.2"}}>
-                              {"Owner"}
+                              {"Signs ASAP"}
                             </div>
                           </div>
                         </>
@@ -324,11 +335,11 @@ export default function AppShell({ v }: Props) {
                 )}
               </>
             )}
-            <button className="ix2" onClick={v.toggleBar} title={v.barLabel} style={{"flex":"none","width":"42px","height":"42px","border":"0","borderRadius":"999px","background":"none","color":"var(--faint)","cursor":"pointer","display":"flex","alignItems":"center","justifyContent":"center","transition":"background .2s var(--ease),color .2s var(--ease)"}}>
+            {!v.phone && <button className="ix2" onClick={v.toggleBar} title={v.barLabel} style={{"flex":"none","width":"42px","height":"42px","border":"0","borderRadius":"999px","background":"none","color":"var(--faint)","cursor":"pointer","display":"flex","alignItems":"center","justifyContent":"center","transition":"background .2s var(--ease),color .2s var(--ease)"}}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css(v.barChevronStyle)}>
                 <path d="m9 6 6 6-6 6" />
               </svg>
-            </button>
+            </button>}
           </div>
         </header>
         {v.showNotifs && (
@@ -376,7 +387,7 @@ export default function AppShell({ v }: Props) {
                 </div>
                 <div style={{"position":"relative","display":"flex","alignItems":"center","gap":"9px","padding":"11px 6px 4px","animation":"notifRow .44s cubic-bezier(.16,1,.3,1) 420ms both"}}>
                   <span style={{"flex":"1","minWidth":"0","fontFamily":"var(--mono)","fontSize":"9px","letterSpacing":"0.1em","color":"var(--faint)","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}}>
-                    {"EVERY EVENT IS WRITTEN TO THE AUDIT LOG"}
+                    {"DEMO EVENTS · NOTHING IS SENT"}
                   </span>
                   <button className="ixa" onClick={v.closeNotifs} style={{"flex":"none","height":"28px","padding":"0 13px","border":"1px solid var(--border)","borderRadius":"var(--r-ctl,10px)","background":"var(--surface-2)","color":"var(--body)","fontSize":"12px","cursor":"pointer","transition":"border-color .2s var(--ease),color .2s var(--ease)"}}>
                     {"Mark all read"}
@@ -389,8 +400,10 @@ export default function AppShell({ v }: Props) {
         {v.isDashboard && <DashboardKpiBand v={v} />}
         <div data-scroll-main="1" style={{"flex":"1","minHeight":"0","overflowY":"auto","overflowX":"hidden","scrollbarWidth":"none"}}>
           {v.isChat && <Home v={v} />}
-          {v.isWork && <Work v={v} />}
-          {v.isRecords && <Records v={v} />}
+          {v.isWork && <SignsWork v={v} />}
+          {v.modulePage && <ModuleHost v={v} page={v.modulePage} />}
+          {v.isRecords && !v.recClient && <Records v={v} />}
+          {v.recClient && <SignsRecords v={v} section={v.recClient} />}
           {v.rec?.isContacts && (
             <>
               <div style={{"display":"flex","flexDirection":"column","gap":"14px"}}>
@@ -452,7 +465,7 @@ export default function AppShell({ v }: Props) {
                           {"No contacts match"}
                         </div>
                         <div style={{"fontSize":"13px","color":"var(--dim)","marginTop":"6px"}}>
-                          {"Try fewer words — it matches on name, role, organisation and tag."}
+                          {"Try fewer words, it matches on name, role, organisation and tag."}
                         </div>
                       </div>
                     </>
@@ -471,7 +484,8 @@ export default function AppShell({ v }: Props) {
           )}
           {v.rec?.isFiles && <RecordsFiles v={v} />}
           {v.rec?.isOntology && <RecordsOntology v={v} />}
-          {v.isActivity && <Activity v={v} />}
+          {v.isActivity && v.actLive && <Activity v={v} />}
+          {v.isActivity && !v.actLive && <SignsActivity v={v} />}
           {v.act?.detailOpen && (
             <>
               <div onClick={v.act?.closeDetail} style={{"position":"fixed","inset":"0","zIndex":"68","background":"var(--scrim)","backdropFilter":"blur(6px)","display":"flex","justifyContent":"flex-end"}}>
@@ -563,6 +577,11 @@ export default function AppShell({ v }: Props) {
                     <span style={{"flex":"1","minWidth":"0","fontFamily":"var(--mono)","fontSize":"9.5px","color":"var(--faint)","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}}>
                       {txt(v.act?.detail?.audit)}
                     </span>
+                    {v.act?.detail?.jobId && (
+                      <button className="ixz" onClick={v.act?.detail?.openJob} style={{"height":"34px","padding":"0 15px","background":"var(--accent-fill,var(--accent))","border":"0","borderRadius":"var(--r-ctl,9px)","fontSize":"13px","fontWeight":"600","color":"var(--on-accent)","cursor":"pointer"}}>
+                        {"Open " + v.act?.detail?.jobId}
+                      </button>
+                    )}
                     {v.act?.detail?.canUndo && (
                       <>
                         <button className="ixz" style={{"height":"34px","padding":"0 15px","background":"none","border":"1px solid var(--border)","borderRadius":"var(--r-ctl,9px)","fontSize":"13px","color":"var(--ink)","cursor":"pointer"}}>
@@ -575,9 +594,10 @@ export default function AppShell({ v }: Props) {
               </div>
             </>
           )}
-          {v.isSettings && <Settings v={v} />}
-          {v.isDashboard && <Dashboard v={v} />}
-          {v.isAgents && <Agents v={v} />}
+          {v.isSettings && <SignsSettings v={v} />}
+          {v.isDashboard && <SignsDashboard v={v} />}
+          {v.isAgents && !v.agentsOverview && <Agents v={v} />}
+          {v.isAgents && v.agentsOverview && <AgentOverview v={v} />}
         </div>
       </main>
       {v.showFab && (
@@ -719,7 +739,7 @@ export default function AppShell({ v }: Props) {
                     </Fragment>
                   ))}
                 </div>
-                <button className="ix10" style={{"width":"100%","height":"38px","marginTop":"14px","background":"none","border":"1px solid var(--border)","borderRadius":"var(--r-ctl,13px)","fontSize":"12.5px","color":"var(--body)","cursor":"pointer","transition":"border-color .2s var(--ease),color .2s var(--ease)"}}>
+                <button className="ix10" onClick={v.goActivity} style={{"width":"100%","height":"38px","marginTop":"14px","background":"none","border":"1px solid var(--border)","borderRadius":"var(--r-ctl,13px)","fontSize":"12.5px","color":"var(--body)","cursor":"pointer","transition":"border-color .2s var(--ease),color .2s var(--ease)"}}>
                   {"Full audit log"}
                 </button>
               </div>
@@ -771,7 +791,7 @@ export default function AppShell({ v }: Props) {
                 <>
                   <div style={{"padding":"8px 24px 4px","animation":"expandIn .3s var(--ease) both"}}>
                     <div style={{"fontFamily":"var(--mono)","fontSize":"9.5px","letterSpacing":"0.13em","color":"var(--faint)","marginTop":"10px"}}>
-                      {"PULSE BUILT THIS — EDIT ANYTHING"}
+                      {"PULSE BUILT THIS, EDIT ANYTHING"}
                     </div>
                     <div style={{"marginTop":"14px"}}>
                       {arr(v.builder?.blocks).map((b: any, i145: number) => (
@@ -820,6 +840,7 @@ export default function AppShell({ v }: Props) {
       {v.newRec?.open && <NewRecordDialog v={v} />}
       {v.paletteOpen && <CommandPalette v={v} />}
       {v.bgGallery?.open && <BackgroundGallery v={v} />}
+      <GlobalOverlays />
     </div>
     </>
   );
